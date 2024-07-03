@@ -5,11 +5,12 @@ app.use(express.json());
 
 let items = [];
 
-
+let idCounter = 0;
 
 app.post('/items', (req, res) => {
     const item = req.body;
-    items.id = items.length + 1;
+    console.log('Item Recieved:', item);
+    item.id = idCounter ++;
     items.push(item);
     res.status(201).send(item);
 });
@@ -21,7 +22,11 @@ app.get('/items', (req, res) => {
 app.get('/items/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const item = items.find(i => i.id === id);
-    isFinite(item) ? res.send(item) : res.status(404).send({ message: 'Item Not Found'});
+    if (item){
+        res.send(item);
+ } else { 
+    res.status(404).send({ message: 'Item Not Found'});
+ }
 });
 
 app.put('/items/:id', (req, res) => {
@@ -31,18 +36,18 @@ app.put('/items/:id', (req, res) => {
         const updatedItem = {...items[itemIndex],...req.body};
         items[itemIndex] = updatedItem;
         res.send(updatedItem);
-        } else {
+    } else {
         res.status(404).send({ message: 'Item Not Found'});
         }
  });
 
 app.delete('/items/:id', (req, res) => {
     const id = parseInt(req.params.id);
-    const itemIndex = items.findItems(i => i.id === id);
+    const itemIndex = items.findIndex(i => i.id === id);
     if (itemIndex !== -1) {
         items.splice(itemIndex, 1);
         res.send({message: 'item deleted successfully'});
-        } else {
+    } else {
         res.status(404).send({ message: 'Item Not Found'});
         }
  });
